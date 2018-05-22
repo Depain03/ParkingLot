@@ -45,7 +45,7 @@ public class ParkingController {
 
 		long registerLevel = register.getLevel();
 		long registerSlot = register.getSlot();
-		if (registerSlot<=10 && registerSlot>=0) {
+		if (registerSlot <= 10 && registerSlot >= 0) {
 			String registrationID = register.getRegistration();
 			Optional<ParkingDetails> optional = parkingrepo.findById(registerLevel);
 			if (optional.isPresent()) {
@@ -57,12 +57,12 @@ public class ParkingController {
 					List<RegistrationDetails> list = registerrepo.retrieveData(registrationID);
 					if (!list.isEmpty()) {
 						status.setStatus("false");
-					}
-					else {
-						List<RegistrationDetails> registerDetails = registerrepo.getRegisterData(registerSlot,registerLevel);
+					} else {
+						List<RegistrationDetails> registerDetails = registerrepo.getRegisterData(registerSlot,
+								registerLevel);
 						if (registerDetails.isEmpty()) {
 							details.setSlot(slot - 1);
-							if (slot -1 == 0) {
+							if (slot - 1 == 0) {
 								details.setAvailable("false");
 							}
 							parkingrepo.save(details);
@@ -76,7 +76,8 @@ public class ParkingController {
 			} else {
 				status.setStatus("false");
 			}
-		}String registrationID = register.getRegistration();
+		}
+		String registrationID = register.getRegistration();
 		Optional<ParkingDetails> optional = parkingrepo.findById(registerLevel);
 		if (optional.isPresent()) {
 			details = optional.get();
@@ -87,12 +88,12 @@ public class ParkingController {
 				List<RegistrationDetails> list = registerrepo.retrieveData(registrationID);
 				if (!list.isEmpty()) {
 					status.setStatus("false");
-				}
-				else {
-					List<RegistrationDetails> registerDetails = registerrepo.getRegisterData(registerSlot,registerLevel);
+				} else {
+					List<RegistrationDetails> registerDetails = registerrepo.getRegisterData(registerSlot,
+							registerLevel);
 					if (registerDetails.isEmpty()) {
 						details.setSlot(slot - 1);
-						if (slot -1 == 0) {
+						if (slot - 1 == 0) {
 							details.setAvailable("false");
 						}
 						parkingrepo.save(details);
@@ -106,7 +107,7 @@ public class ParkingController {
 		} else {
 			status.setStatus("false");
 		}
-		
+
 		return status;
 	}
 
@@ -137,34 +138,42 @@ public class ParkingController {
 				}
 			}
 		}
-		
+
 		status.setStatus(flag);
 		return status;
 
 	}
 
 	@GetMapping("/parking/_search/{color}/registration")
-	public HashMap<String, ArrayList<String>> getregistrationbyColor(@PathVariable(value = "color") String color){
-		List<RegistrationDetails> list=registerrepo.getregistrationbyColor(color);
-		HashMap<String, ArrayList<String>> map= new HashMap<String, ArrayList<String>>();
-		ArrayList<String> array=new ArrayList<String>();
-		Iterator<RegistrationDetails > it=list.iterator();
-		while(it.hasNext()) {
+	public ArrayList<String> getregistrationbyColor(@PathVariable(value = "color") String color) {
+		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
+		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+		ArrayList<String> array = new ArrayList<String>();
+		Iterator<RegistrationDetails> it = list.iterator();
+		while (it.hasNext()) {
 			array.add(it.next().getRegistration());
 		}
-		map.put("registration", array);
-		return map;
+		return array;
 	}
-	
+
 	@GetMapping("/parking/_search/{registration}/slot")
-	public List<RegistrationDetails> getSlotbyRegistration(@PathVariable(value = "registration") String registration){
-		List<RegistrationDetails> list=registerrepo.retrieveData(registration);
+	public List<RegistrationDetails> getSlotbyRegistration(@PathVariable(value = "registration") String registration) {
+		List<RegistrationDetails> list = registerrepo.retrieveData(registration);
 		return list;
 	}
-	
-	@GetMapping("/parking/_search/{slot}/colour")
-	public List<RegistrationDetails> getcolorbySlot(@PathVariable(value = "slot") String slot){
-		List<RegistrationDetails> list=registerrepo.retrieveData(slot);
-		return list;
+
+	@GetMapping("/parking/_search/{color}/slots")
+	public ArrayList<HashMap<String,Long>> getcolorbySlot(@PathVariable(value = "color") String color) {
+		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
+		ArrayList<HashMap<String,Long>> array = new ArrayList<HashMap<String,Long>>();
+		Iterator<RegistrationDetails> it = list.iterator();
+		while (it.hasNext()) {
+			HashMap<String,Long> map = new HashMap<String, Long>();
+			RegistrationDetails details=it.next();
+			map.put("slot", details.getSlot());
+			map.put("level", details.getLevel());
+			array.add(map);
+		}
+		return array;
 	}
 }

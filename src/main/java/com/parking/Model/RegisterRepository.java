@@ -28,4 +28,5 @@ public interface RegisterRepository extends JpaRepository<RegistrationDetails, S
 	@Transactional
 	@Query(value="select r from RegistrationDetails r where r.colour = :colour")
 	List<RegistrationDetails> getregistrationbyColor(@Param("colour") String colour);
+	
 }
