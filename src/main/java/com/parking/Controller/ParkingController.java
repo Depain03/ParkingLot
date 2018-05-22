@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.parking.Model.ParkingRepository;
 import com.parking.Model.RegisterRepository;
-import com.parking.Operations.DBOperations;
 import com.parking.Pojo.*;
 
 @RestController
@@ -31,13 +30,10 @@ public class ParkingController {
 
 	@Autowired
 	RegisterRepository registerrepo;
-	
-	@Autowired
-	DBOperations operations;
 
 	@GetMapping("/parking")
 	public List<ParkingDetails> getParkingDetails() {
-		return operations.getParkingDetails();
+		return parkingrepo.findAll();
 	}
 
 	@GetMapping("/parking/_search/{color}/registration")
@@ -81,7 +77,7 @@ public class ParkingController {
 
 		long registerLevel = register.getLevel();
 		long registerSlot = register.getSlot();
-		if (registerSlot <= 10 && registerSlot >= 0) {
+		if (registerSlot <= 10 & registerSlot >= 0) {
 			String registrationID = register.getRegistration();
 			Optional<ParkingDetails> optional = parkingrepo.findById(registerLevel);
 			if (optional.isPresent()) {
@@ -113,34 +109,7 @@ public class ParkingController {
 				status.setStatus("false");
 			}
 		}
-		String registrationID = register.getRegistration();
-		Optional<ParkingDetails> optional = parkingrepo.findById(registerLevel);
-		if (optional.isPresent()) {
-			details = optional.get();
-			slot = details.getSlot();
-			if (slot == 0) {
-				status.setStatus("false");
-			} else {
-				List<RegistrationDetails> list = registerrepo.retrieveData(registrationID);
-				if (!list.isEmpty()) {
-					status.setStatus("false");
-				} else {
-					List<RegistrationDetails> registerDetails = registerrepo.getRegisterData(registerSlot,
-							registerLevel);
-					if (registerDetails.isEmpty()) {
-						details.setSlot(slot - 1);
-						if (slot - 1 == 0) {
-							details.setAvailable("false");
-						}
-						parkingrepo.save(details);
-						registerrepo.save(register);
-						status.setStatus("true");
-					} else {
-						status.setStatus("false");
-					}
-				}
-			}
-		} else {
+		 else {
 			status.setStatus("false");
 		}
 
