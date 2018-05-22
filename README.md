@@ -2,8 +2,10 @@
 
 There are two types of users:
 
-The customers who want to park their cars
+The customers who want to park their cars.
+
 The admin of the parking lot who can do the searches.
+
 
 # Admin API's (Search)
 
@@ -18,6 +20,7 @@ The admin of the parking lot who can do the searches.
 3. URI: /api/parking/_search/{color}/slots
 
    Method: GET   
+   
    
 # User API's
 
