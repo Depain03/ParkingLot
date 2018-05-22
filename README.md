@@ -2,9 +2,9 @@
 
 There are two types of users:
 
-The customers who want to park their cars.
+1. The customers who want to park their cars.
 
-The admin of the parking lot who can do the searches.
+2. The admin of the parking lot who can do the searches.
 
 
 # Admin API's (Search)
