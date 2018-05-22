@@ -1,5 +1,10 @@
 # ParkingLot
 
+There are two types of users:
+
+The customers who want to park their cars
+The admin of the parking lot who can do the searches.
+
 # Admin API's (Search)
 
 1. URI: /api/parking/_search/{color}/registration
