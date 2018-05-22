@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.parking.Model.ParkingRepository;
 import com.parking.Model.RegisterRepository;
+import com.parking.Operations.DBOperations;
 import com.parking.Pojo.*;
 
 @RestController
@@ -30,12 +31,47 @@ public class ParkingController {
 
 	@Autowired
 	RegisterRepository registerrepo;
+	
+	@Autowired
+	DBOperations operations;
 
 	@GetMapping("/parking")
 	public List<ParkingDetails> getParkingDetails() {
-		return parkingrepo.findAll();
+		return operations.getParkingDetails();
 	}
 
+	@GetMapping("/parking/_search/{color}/registration")
+	public ArrayList<String> getregistrationbyColor(@PathVariable(value = "color") String color) {
+		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
+		ArrayList<String> array = new ArrayList<String>();
+		Iterator<RegistrationDetails> it = list.iterator();
+		while (it.hasNext()) {
+			array.add(it.next().getRegistration());
+		}
+		return array;
+	}
+
+	@GetMapping("/parking/_search/{registration}/slot")
+	public List<RegistrationDetails> getSlotbyRegistration(@PathVariable(value = "registration") String registration) {
+		List<RegistrationDetails> list = registerrepo.retrieveData(registration);
+		return list;
+	}
+
+	@GetMapping("/parking/_search/{color}/slots")
+	public ArrayList<HashMap<String,Long>> getcolorbySlot(@PathVariable(value = "color") String color) {
+		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
+		ArrayList<HashMap<String,Long>> array = new ArrayList<HashMap<String,Long>>();
+		Iterator<RegistrationDetails> it = list.iterator();
+		while (it.hasNext()) {
+			HashMap<String,Long> map = new HashMap<String, Long>();
+			RegistrationDetails details=it.next();
+			map.put("slot", details.getSlot());
+			map.put("level", details.getLevel());
+			array.add(map);
+		}
+		return array;
+	}
+	
 	@PostMapping("/parking")
 	public Status registerVehicle(@Valid @RequestBody RegistrationDetails register) {
 
@@ -144,36 +180,5 @@ public class ParkingController {
 
 	}
 
-	@GetMapping("/parking/_search/{color}/registration")
-	public ArrayList<String> getregistrationbyColor(@PathVariable(value = "color") String color) {
-		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
-		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
-		ArrayList<String> array = new ArrayList<String>();
-		Iterator<RegistrationDetails> it = list.iterator();
-		while (it.hasNext()) {
-			array.add(it.next().getRegistration());
-		}
-		return array;
-	}
-
-	@GetMapping("/parking/_search/{registration}/slot")
-	public List<RegistrationDetails> getSlotbyRegistration(@PathVariable(value = "registration") String registration) {
-		List<RegistrationDetails> list = registerrepo.retrieveData(registration);
-		return list;
-	}
-
-	@GetMapping("/parking/_search/{color}/slots")
-	public ArrayList<HashMap<String,Long>> getcolorbySlot(@PathVariable(value = "color") String color) {
-		List<RegistrationDetails> list = registerrepo.getregistrationbyColor(color);
-		ArrayList<HashMap<String,Long>> array = new ArrayList<HashMap<String,Long>>();
-		Iterator<RegistrationDetails> it = list.iterator();
-		while (it.hasNext()) {
-			HashMap<String,Long> map = new HashMap<String, Long>();
-			RegistrationDetails details=it.next();
-			map.put("slot", details.getSlot());
-			map.put("level", details.getLevel());
-			array.add(map);
-		}
-		return array;
-	}
+	
 }
