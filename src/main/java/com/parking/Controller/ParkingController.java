@@ -29,12 +29,6 @@ public class ParkingController {
 	@Autowired
 	ParkingService service;
 	
-	@Autowired
-	ParkingRepository parkingrepo;
-
-	@Autowired
-	RegisterRepository registerrepo;
-
 	@GetMapping("/parking")
 	public List<ParkingDetails> getParkingDetails() {
 		return service.getParkingDetails();
